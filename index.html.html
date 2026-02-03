@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GO FRENCH! BINGO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #314ab8 50%, #ffffff 100%,#764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1700px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: auto 600px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .bingo-section {
+            background: white;
+           
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 660px;
+        }
+
+        .video-section {
+            background: white;
+            
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .bingo-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+            width: 600px;
+            height: 600px;
+        }
+
+        .bingo-cell {
+            aspect-ratio: 1/1;
+            width: 100%;
+            height: 100%;
+            background: rgb(115, 117, 153);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            white-space: normal;
+            word-break: break-word;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .bingo-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .bingo-cell.marked {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            position: relative;
+        }
+
+        .bingo-cell.marked::after {
+           
+            position: absolute;
+            font-size: 40px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .bingo-cell.free {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #333;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .discord-btn {
+            background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%);
+        }
+
+        .video-wrapper {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .winner-message {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            display: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 1400px) {
+            .container {
+                grid-template-columns: 1fr;
+                max-width: 600px;
+            }
+
+            .video-section {
+                order: -1;
+                height: auto;
+            }
+
+            .bingo-section {
+                width: 100%;
+            }
+
+            .bingo-board {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1 / 1;
+            }
+
+            .video-wrapper {
+                position: relative;
+                padding-bottom: 56.25%;
+                height: 0;
+            }
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .bingo-section,
+            .video-section {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+                margin-bottom: 15px;
+            }
+
+            .bingo-board {
+                gap: 8px;
+            }
+
+            .bingo-cell {
+                border-radius: 8px;
+                padding: 6px;
+                font-size: 14px;
+            }
+
+            .bingo-cell.marked::after {
+                font-size: 32px;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            .winner-message {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .bingo-board {
+                gap: 6px;
+            }
+
+            .bingo-cell {
+                border-radius: 6px;
+                font-size: 12px;
+                padding: 4px;
+            }
+
+            .bingo-cell.marked::after {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification"></div>
+    <h1> GO FRENCH! BINGO</h1>
+    <div class="container">
+        <div class="video-section">
+         
+            <div class="video-wrapper">
+                <iframe 
+                    src="https://www.youtube.com/embed/WpBcAvbExXk" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+
+        <div class="bingo-section" id="bingoSection">
+
+            <div class="bingo-board" id="bingoBoard"></div>
+            <div class="controls">
+                <button class="discord-btn" onclick="shareToDiscord()">📸 Share to Discord</button>
+            </div>
+            <div class="winner-message" id="winnerMessage">🎉 BINGO! 🎉</div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        const VIDEO_ID = 'WpBcAvbExXk'; // YouTube video ID
+        const STORAGE_KEY = `bingo_game_${VIDEO_ID}`;
+
+        const bingoWords = [
+            "ANIMAL", "Salut, David.", "« Bonjour à tous ! »", "POLITIQUE", "JEU VIDÉO",
+            "SPONSOR", "NOURRITURE", "Graphique générique 📉", "⏱️ Plus de 20 minutes", "Zoom dramatique 🔍",
+            "« C'est important » ❗", "Musique dramatique 🎻", "« En réalité… » 🧠", "Meme connu 😂", "Message d'espoir 🌱",
+            "« Bref » 🏃", "Regard caméra 👀", "Appel à l'abonnement 🔔", "Remerciements 🙏", "Mot barré ❌",
+            "B-roll par-dessus la voix 🎞️", "Titre dramatique", "L'HISTOIRE", "sous-titre 🤩🙏", "sans sous-titre 😔",
+            "effrayant 😱", "Question rhétorique ❓", "c'est bizarre", "Petit rire étouffé 😏", "SOCIÉTÉ",
+            "GÉOGRAPHIE", "DESSINER/UN DESSIN", "Je comprends 💪", "Je ne comprends pas 😤", "Quelqu'un est assis 🪑",
+            "Quelqu'un marche 🚶", "Paysage / nature 🌄", "Foule floue 🚶‍♀️🚶‍♂️", "Musique douce 🎵", "Geste vague 🙌",
+            "CHANSON", "micro visible 🎤", "« Officiellement… »", "« Selon les experts… »", "Boire 💧",
+            "Pointer ☝️", "MANGER", "Conduire 🚗", "prendre le bus/train", "Drama 🔥"
+        ];
+
+        let board = [];
+        let marked = new Set();
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function saveGameState() {
+            const gameState = {
+                board: board,
+                marked: Array.from(marked),
+                videoId: VIDEO_ID
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+        }
+
+        function loadGameState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const gameState = JSON.parse(saved);
+                    if (gameState.videoId === VIDEO_ID) {
+                        board = gameState.board;
+                        marked = new Set(gameState.marked);
+                        return true;
+                    }
+                } catch (e) {
+                    console.error('Error loading game state:', e);
+                }
+            }
+            return false;
+        }
+
+        function createBoard() {
+            // Try to load existing game state
+            if (loadGameState()) {
+                renderBoard();
+                checkWin();
+                return;
+            }
+
+            // Create new board if no saved state
+            const shuffled = shuffleArray(bingoWords);
+            board = shuffled.slice(0, 25);
+            board[12] = "LIBRE";
+            marked = new Set([12]);
+            
+            saveGameState();
+            renderBoard();
+        }
+
+        function renderBoard() {
+            const boardElement = document.getElementById('bingoBoard');
+            boardElement.innerHTML = '';
+            
+            board.forEach((word, index) => {
+                const cell = document.createElement('button');
+                cell.className = 'bingo-cell';
+                cell.textContent = word;
+                cell.onclick = () => toggleCell(index);
+                
+                if (index === 12) {
+                    cell.classList.add('free');
+                }
+                
+                if (marked.has(index)) {
+                    cell.classList.add('marked');
+                }
+                
+                boardElement.appendChild(cell);
+                
+                // Scale down font if text overflows
+                setTimeout(() => {
+                    let fontSize = 16;
+                    cell.style.fontSize = fontSize + 'px';
+                    
+                    while (cell.scrollHeight > cell.clientHeight && fontSize > 8) {
+                        fontSize -= 1;
+                        cell.style.fontSize = fontSize + 'px';
+                    }
+                }, 0);
+            });
+        }
+
+        function toggleCell(index) {
+            if (index === 12) return;
+            
+            const cells = document.querySelectorAll('.bingo-cell');
+            
+            if (marked.has(index)) {
+                marked.delete(index);
+                cells[index].classList.remove('marked');
+            } else {
+                marked.add(index);
+                cells[index].classList.add('marked');
+            }
+            
+            saveGameState();
+            checkWin();
+        }
+
+        function checkWin() {
+            const winPatterns = [
+                [0, 1, 2, 3, 4], [5, 6, 7, 8, 9], [10, 11, 12, 13, 14],
+                [15, 16, 17, 18, 19], [20, 21, 22, 23, 24],
+                [0, 5, 10, 15, 20], [1, 6, 11, 16, 21], [2, 7, 12, 17, 22],
+                [3, 8, 13, 18, 23], [4, 9, 14, 19, 24],
+                [0, 6, 12, 18, 24], [4, 8, 12, 16, 20]
+            ];
+            
+            for (const pattern of winPatterns) {
+                if (pattern.every(index => marked.has(index))) {
+                    document.getElementById('winnerMessage').style.display = 'block';
+                    return;
+                }
+            }
+            
+            document.getElementById('winnerMessage').style.display = 'none';
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        async function shareToDiscord() {
+            try {
+                const bingoSection = document.getElementById('bingoSection');
+                
+                // Capture the bingo section as a canvas
+                const canvas = await html2canvas(bingoSection, {
+                    backgroundColor: '#ffffff',
+                    scale: 1,
+                    logging: false
+                });
+                
+                // Convert canvas to blob
+                canvas.toBlob(async (blob) => {
+                    try {
+                        // Create a file from the blob
+                        const file = new File([blob], 'bingo-board.png', { type: 'image/png' });
+                        
+                        // Use the Web Share API if available
+                        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                                files: [file],
+                                title: 'My Bingo Board',
+                                text: 'Check out my bingo board!'
+                            });
+                            showNotification('✅ Shared successfully!');
+                        } else {
+                            // Fallback: download the image
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'bingo-board.png';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                            showNotification('📥 Screenshot downloaded! You can now upload it to Discord.');
+                        }
+                    } catch (error) {
+                        console.error('Error sharing:', error);
+                        showNotification('❌ Error sharing. Screenshot downloaded instead.');
+                    }
+                }, 'image/png');
+                
+            } catch (error) {
+                console.error('Error capturing screenshot:', error);
+                showNotification('❌ Error capturing screenshot');
+            }
+        }
+
+        // Initialize the board on page load
+        createBoard();
+    </script>
+</body>
+</html>
